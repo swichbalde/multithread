@@ -4,7 +4,7 @@ import java.util.List;
 
 public class CountOfPrimeNums extends Thread{
 
-    private int count = 0;
+    private Integer count = 0;
     private final List<Integer> nums;
 
     public CountOfPrimeNums(List<Integer> nums) {
@@ -15,7 +15,7 @@ public class CountOfPrimeNums extends Thread{
     public void run() {
         for (Integer num : nums) {
             if (isPrime(num))
-                count++;
+                count = count + 1;
         }
     }
 

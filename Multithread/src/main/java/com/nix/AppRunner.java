@@ -3,14 +3,34 @@ package com.nix;
 import com.nix.hello.HelloFromThread;
 import com.nix.prime.CountOfPrimeNums;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 public class AppRunner {
 
-    public static void main(String[] args) throws InterruptedException {
-        helloThread();
-        Thread.sleep(1500);
-        countPrime();
+    public static void main(String[] args) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Choose operation" +
+                "\n1. Hello tread 49 -> 0" +
+                "\n2. Count prime nums");
+        try {
+            int choose = Integer.parseInt(reader.readLine());
+
+            switch (choose) {
+                case 1:
+                    helloThread();
+                    break;
+                case 2:
+                    List<Integer> nums = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 7);
+                    countPrime(nums);
+                    break;
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Wrong input");
+        }
     }
 
     private static void helloThread() {
@@ -21,20 +41,27 @@ public class AppRunner {
         }
     }
 
-    private static void countPrime() throws InterruptedException {
-        List<Integer> nums1 = List.of(1, 2, 3, 4, 5);
-        List<Integer> nums2 = List.of(6, 7, 8, 9, 10, 7);
+    private static void countPrime(List<Integer> nums) {
 
-        CountOfPrimeNums countOfPrimeNums = new CountOfPrimeNums(nums1);
-        countOfPrimeNums.start();
-        while (countOfPrimeNums.isAlive())
-            Thread.sleep(100);
-        int count = countOfPrimeNums.getCount();
-        countOfPrimeNums = new CountOfPrimeNums(nums2);
-        countOfPrimeNums.start();
-        while (countOfPrimeNums.isAlive())
-            Thread.sleep(100);
-        count += countOfPrimeNums.getCount();
-        System.out.println("count = " + count);
+        List<Integer> nums1 = nums.subList(0, nums.size() / 2);
+        List<Integer> nums2 = nums.subList(nums.size() / 2, nums.size());
+
+        CountOfPrimeNums countOfPrimeNums1 = new CountOfPrimeNums(nums1);
+        countOfPrimeNums1.start();
+
+        CountOfPrimeNums countOfPrimeNums2 = new CountOfPrimeNums(nums2);
+        countOfPrimeNums2.start();
+
+        try {
+            countOfPrimeNums1.join();
+            countOfPrimeNums2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        int count = countOfPrimeNums1.getCount();
+        count += countOfPrimeNums2.getCount();
+
+        System.out.println("Count of primes = " + count);
     }
 }

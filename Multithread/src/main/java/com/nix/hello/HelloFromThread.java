@@ -7,7 +7,7 @@ public class HelloFromThread extends Thread {
     @Override
     public void run() {
         try {
-            Thread.sleep(coff * 30L);
+            Thread.sleep(coff * 10L * Runtime.getRuntime().availableProcessors());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
